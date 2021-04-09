@@ -16,5 +16,15 @@ describe('Text', () => {
 
       expect(someText.compose()).to.equal('A stringmore string\nfinal string')
     })
+
+    it('Can compose any Composable object, as well as strings.', () => {
+      const someComposable = {
+        compose: () => 'a composable',
+      }
+      const someString = 'a string'
+      const someText = text([someComposable, someString])
+
+      expect(someText.compose()).to.equal('a composablea string')
+    })
   })
 })
