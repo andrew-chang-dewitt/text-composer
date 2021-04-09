@@ -1,3 +1,8 @@
+/*
+ * Shared functionality
+ *
+ */
+
 interface Compose {
   (): string
 }
@@ -10,21 +15,51 @@ const isComposable = (element: any): element is Composable =>
   element.hasOwnProperty('compose')
 
 type Element = Composable | string
+type InlineElement = Link | Italic | string
 
 const composeElement = (el: Element): string =>
   isComposable(el) ? el.compose() : el
 
-const arrayComposer = (content: Array<Element>): { compose: Compose } => ({
-  compose: () => content.map(composeElement).join(''),
-})
+const composeArray = (array: Element[]): string =>
+  array.map(composeElement).join('')
 
-interface Text {
-  compose: Compose
+/*
+ * Elements
+ *
+ */
+
+interface Container extends Composable {
+  _tag: 'Container'
 }
 
-export const text = (content: Array<Element>): Text =>
-  Object.assign({}, arrayComposer(content))
+export const container = (content: Array<Element>): Container => ({
+  _tag: 'Container',
+  compose: () => composeArray(content),
+})
 
-export const line = (content: Element) => ({
+interface Line extends Composable {
+  _tag: 'Line'
+}
+
+export const line = (content: Element): Line => ({
+  _tag: 'Line',
   compose: () => composeElement(content) + '\n',
+})
+
+interface Italic extends Composable {
+  _tag: 'Italic'
+}
+
+export const italic = (content: InlineElement): Italic => ({
+  _tag: 'Italic',
+  compose: () => `*${composeElement(content)}*`,
+})
+
+interface Link extends Composable {
+  _tag: 'Link'
+}
+
+export const link = (url: string, text?: InlineElement): Link => ({
+  _tag: 'Link',
+  compose: () => (text ? `[${composeElement(text)}](${url})` : `<${url}>`),
 })
