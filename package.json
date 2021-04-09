@@ -1,17 +1,15 @@
 {
-  "name": "express-typescript-sample",
-  "version": "1.0.0",
+  "name": "text-composer",
+  "version": "0.0.1a",
   "description": "",
-  "main": "dist/server.js",
+  "main": "dist/lib.js",
   "scripts": {
     "lint": "prettier --config .prettierrc.yaml --write './(*.html|*.js|*.json|src/**/*.ts)'",
     "test": "mocha",
     "coverage": "nyc npm run test",
     "prebuild": "npm run lint && npm run coverage",
     "build": "tsc",
-    "prestart": "npm run build",
-    "start": "node .",
-    "dev": "tsc-watch -p tsconfig.json --noClear --onSuccess \"node .\""
+    "dev": "tsc-watch -p tsconfig.json --onSuccess \"npm test\""
   },
   "nyc": {
     "all": true,
@@ -19,8 +17,8 @@
       "text"
     ],
     "check-coverage": true,
-    "lines": 99,
-    "functions": 99,
+    "lines": 100,
+    "functions": 100,
     "extension": [
       ".ts"
     ],
@@ -42,15 +40,10 @@
     ],
     "require": "ts-node/register"
   },
-  "author": "",
+  "author": "Andrew Chang-DeWitt",
   "license": "MIT",
-  "dependencies": {
-    "morgan": "^1.10.0",
-    "express": "^4.17.1"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@types/express": "^4.17.6",
-    "@types/morgan": "^1.9.0",
     "@types/node": "^13.11.1",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
