@@ -22,3 +22,7 @@ interface Text {
 
 export const text = (content: Array<Element>): Text =>
   Object.assign({}, arrayComposer(content))
+
+export const line = (content: Element) => ({
+  compose: () => (isComposable(content) ? content.compose() : content) + '\n',
+})

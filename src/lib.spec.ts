@@ -1,7 +1,7 @@
 import 'mocha'
 import { expect } from 'chai'
 
-import { text } from './lib'
+import { text, line } from './lib'
 
 describe('Text', () => {
   describe('compose()', () => {
@@ -25,6 +25,25 @@ describe('Text', () => {
       const someText = text([someComposable, someString])
 
       expect(someText.compose()).to.equal('a composablea string')
+    })
+  })
+})
+
+describe('line', () => {
+  describe('compose()', () => {
+    it('Returns the given content, followed by a newline.', () => {
+      const someLine = line('Content')
+
+      expect(someLine.compose()).to.equal('Content\n')
+    })
+
+    it('Can be given a Composable as content.', () => {
+      const someComposable = {
+        compose: () => 'a composable',
+      }
+      const someLine = line(someComposable)
+
+      expect(someLine.compose()).to.equal('a composable\n')
     })
   })
 })
