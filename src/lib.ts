@@ -11,9 +11,11 @@ const isComposable = (element: any): element is Composable =>
 
 type Element = Composable | string
 
+const composeElement = (el: Element): string =>
+  isComposable(el) ? el.compose() : el
+
 const arrayComposer = (content: Array<Element>): { compose: Compose } => ({
-  compose: () =>
-    content.map((el) => (isComposable(el) ? el.compose() : el)).join(''),
+  compose: () => content.map(composeElement).join(''),
 })
 
 interface Text {
@@ -24,5 +26,5 @@ export const text = (content: Array<Element>): Text =>
   Object.assign({}, arrayComposer(content))
 
 export const line = (content: Element) => ({
-  compose: () => (isComposable(content) ? content.compose() : content) + '\n',
+  compose: () => composeElement(content) + '\n',
 })
