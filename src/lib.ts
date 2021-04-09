@@ -1,5 +1,5 @@
 interface Compose {
-  (): string | Composable
+  (): string
 }
 
 export interface Composable {
