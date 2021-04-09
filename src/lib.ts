@@ -1,3 +1,8 @@
+/*
+ * Shared functionality
+ *
+ */
+
 interface Compose {
   (): string
 }
@@ -6,45 +11,55 @@ export interface Composable {
   compose: Compose
 }
 
-export interface InlineComposable extends Composable {
-  _tag: 'Inline'
-}
-
 const isComposable = (element: any): element is Composable =>
   element.hasOwnProperty('compose')
 
-const isInline = (element: any): element is InlineComposable =>
-  element._tag === 'Inline'
-
 type Element = Composable | string
-type InlineElement = InlineComposable | string
+type InlineElement = Link | Italic | string
 
 const composeElement = (el: Element): string =>
   isComposable(el) ? el.compose() : el
 
-const composeInline = (el: InlineElement): string =>
-  isInline(el) ? el.compose() : el
+const composeArray = (array: Element[]): string =>
+  array.map(composeElement).join('')
 
-const arrayComposer = (content: Array<Element>): { compose: Compose } => ({
-  compose: () => content.map(composeElement).join(''),
-})
+/*
+ * Elements
+ *
+ */
 
-interface Text {
-  compose: Compose
+interface Container extends Composable {
+  _tag: 'Container'
 }
 
-export const text = (content: Array<Element>): Text =>
-  Object.assign({}, arrayComposer(content))
+export const container = (content: Array<Element>): Container => ({
+  _tag: 'Container',
+  compose: () => composeArray(content),
+})
 
-export const line = (content: Element) => ({
+interface Line extends Composable {
+  _tag: 'Line'
+}
+
+export const line = (content: Element): Line => ({
+  _tag: 'Line',
   compose: () => composeElement(content) + '\n',
 })
 
-export const inline = (content: InlineElement): InlineElement => ({
-  _tag: 'Inline',
-  compose: () => composeInline(content),
+interface Italic extends Composable {
+  _tag: 'Italic'
+}
+
+export const italic = (content: InlineElement): Italic => ({
+  _tag: 'Italic',
+  compose: () => `*${composeElement(content)}*`,
 })
 
-export const italic = (content: InlineElement) => ({
-  compose: () => `*${composeInline(content)}*`,
+interface Link extends Composable {
+  _tag: 'Link'
+}
+
+export const link = (url: string, text?: InlineElement): Link => ({
+  _tag: 'Link',
+  compose: () => (text ? `[${composeElement(text)}](${url})` : `<${url}>`),
 })
