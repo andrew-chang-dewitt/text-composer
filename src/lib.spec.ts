@@ -1,7 +1,7 @@
 import 'mocha'
 import { expect } from 'chai'
 
-import { text, line } from './lib'
+import { text, line, inline, italic } from './lib'
 
 describe('Text', () => {
   describe('compose()', () => {
@@ -44,6 +44,23 @@ describe('line', () => {
       const someLine = line(someComposable)
 
       expect(someLine.compose()).to.equal('a composable\n')
+    })
+  })
+})
+
+describe('italic', () => {
+  describe('compose()', () => {
+    it('Returns the given content, wrapped in astricks.', () => {
+      const someItalic = italic('Content')
+
+      expect(someItalic.compose()).to.equal('*Content*')
+    })
+
+    it('Can wrap in-line Elements.', () => {
+      const someInline = inline('in-line')
+      const someItalic = italic(someInline)
+
+      expect(someItalic.compose()).to.equal('*in-line*')
     })
   })
 })
