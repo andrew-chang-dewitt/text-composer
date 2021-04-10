@@ -41,9 +41,17 @@ interface Line extends Composable {
   _tag: 'Line'
 }
 
-export const line = (content: Element): Line => ({
+interface LineOptions {
+  prefix?: string
+}
+
+export const line = (content: Element, options?: LineOptions): Line => ({
   _tag: 'Line',
-  compose: () => composeElement(content) + '\n',
+  compose: () => {
+    const prefix = options?.prefix ? options.prefix : ''
+
+    return `${prefix}${composeElement(content)}\n`
+  },
 })
 
 interface Italic extends Composable {
@@ -62,4 +70,10 @@ interface Link extends Composable {
 export const link = (url: string, text?: InlineElement): Link => ({
   _tag: 'Link',
   compose: () => (text ? `[${composeElement(text)}](${url})` : `<${url}>`),
+})
+
+export const list = (items: Element[]) => ({
+  _tag: 'List',
+  compose: () =>
+    composeArray(items.map((item) => line(item, { prefix: '- ' }))),
 })
