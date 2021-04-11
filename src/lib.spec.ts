@@ -1,7 +1,7 @@
 import 'mocha'
 import { expect } from 'chai'
 
-import { container, line, italic, link } from './lib'
+import { container, line, italic, link, list } from './lib'
 
 describe('Container', () => {
   describe('compose()', () => {
@@ -93,6 +93,17 @@ describe('Link', () => {
 
       // use regex to match italic content, but not composition
       expect(someLink.compose()).to.match(/\[.*italic text.*\]\(link\)/)
+    })
+  })
+})
+
+describe('List', () => {
+  describe('compose()', () => {
+    it('Composes a list of multiple Elements', () => {
+      const someElement = link('a link')
+      const someList = list(['a list item', someElement])
+
+      expect(someList.compose()).to.match(/- .*\n- .*\n/)
     })
   })
 })
