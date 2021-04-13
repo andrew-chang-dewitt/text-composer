@@ -28,6 +28,7 @@ const ListItem = (item: InlineComposable): Node<'ListItem'> =>
 export const List = (items: InlineComposable[]) =>
   BuildNode<'List'>('List', items.map(ListItem))
 
+/* istanbul ignore next */
 const assertUnreachable = (): never => {
   throw Error('This should never happen.')
 }
@@ -47,6 +48,10 @@ export const Header = (
     return Line(`${pounds} ${text}`)
   }
 
+  if (level > 6) throw RangeError('Level must be less than or equal to 6.')
+  if (level < 1) throw RangeError('Level must be greater than or equal to 1.')
+  if (!Number.isInteger(level)) throw RangeError('Level must be an integer.')
+
   const buildContent = (
     level: number,
     text: InlineComposable
@@ -61,6 +66,7 @@ export const Header = (
       case 5:
       case 6:
         return [buildPoundHeder(level, text)]
+      /* istanbul ignore next */
       default:
         return assertUnreachable()
     }
