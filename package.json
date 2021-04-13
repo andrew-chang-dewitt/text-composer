@@ -3,12 +3,20 @@
   "version": "0.0.1a",
   "description": "",
   "main": "dist/lib.js",
+  "types": "dist/lib.d.ts",
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "lint": "prettier --config .prettierrc.yaml --write './(*.html|*.js|*.json|src/**/*.ts)'",
     "test": "mocha",
     "coverage": "nyc npm run test",
-    "prebuild": "npm run lint && npm run coverage",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean && npm run lint && npm run coverage",
     "build": "tsc",
+    "watch": "tsc-watch -p tsconfig.json",
     "dev": "tsc-watch -p tsconfig.json --onSuccess \"npm test\""
   },
   "nyc": {
