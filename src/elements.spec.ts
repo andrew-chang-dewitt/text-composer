@@ -93,28 +93,28 @@ describe('List', () => {
 })
 
 describe('Header', () => {
-  // describe('Raises an error if not 1>=level<=6.', () => {
-  //   it('Must be less than or equal to 6.', () => {
-  //     expect(() => Header(7, 'text')).to.throw(
-  //       RangeError,
-  //       /must be less than or equal to 6/
-  //     )
-  //   })
+  describe('Raises an error if not 1>=level<=6.', () => {
+    it('Must be less than or equal to 6.', () => {
+      expect(() => Header(7, 'text')).to.throw(
+        RangeError,
+        /must be less than or equal to 6/
+      )
+    })
 
-  //   it('Must be greater than or equal to 1.', () => {
-  //     expect(() => Header(0, 'text')).to.throw(
-  //       RangeError,
-  //       /must be greater than or equal to 1/
-  //     )
-  //   })
+    it('Must be greater than or equal to 1.', () => {
+      expect(() => Header(0, 'text')).to.throw(
+        RangeError,
+        /must be greater than or equal to 1/
+      )
+    })
 
-  //   it('Must be an integer.', () => {
-  //     expect(() => Header(1.1, 'text')).to.throw(
-  //       RangeError,
-  //       /must be an integer/
-  //     )
-  //   })
-  // })
+    it('Must be an integer.', () => {
+      expect(() => Header(1.1, 'text')).to.throw(
+        RangeError,
+        /must be an integer/
+      )
+    })
+  })
 
   describe('compose()', () => {
     it('Contains the given text.', () => {
