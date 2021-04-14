@@ -1,11 +1,5 @@
 import { Node, BuildNode, Composable } from './node'
 
-export const Container = (children: Composable[]): Node<'Container'> =>
-  BuildNode<'Container'>('Container', children)
-
-export const Line = (content: Composable): Node<'Line'> =>
-  BuildNode<'Line'>('Line', [content, '\n'])
-
 type InlineComposable = string | Node<'Italic'> | Node<'Link'>
 
 export const Italic = (content: InlineComposable): Node<'Italic'> =>
@@ -22,11 +16,17 @@ export const Link = (
   return BuildNode<'Link'>('Link', content)
 }
 
+export const Line = (content: Composable): Node<'Line'> =>
+  BuildNode<'Line'>('Line', [content, '\n'])
+
+export const Paragraph = (content: InlineComposable[]): Node<'Paragraph'> =>
+  BuildNode<'Paragraph'>('Paragraph', ['\n', ...content, '\n\n'])
+
 const ListItem = (item: InlineComposable): Node<'ListItem'> =>
   BuildNode<'ListItem'>('ListItem', ['- ', Line(item)])
 
 export const List = (items: InlineComposable[]) =>
-  BuildNode<'List'>('List', items.map(ListItem))
+  BuildNode<'List'>('List', ['\n', ...items.map(ListItem), '\n'])
 
 /* istanbul ignore next */
 const assertUnreachable = (): never => {
