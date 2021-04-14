@@ -2,7 +2,6 @@ import 'mocha'
 import { expect } from 'chai'
 
 import {
-  Container,
   Line,
   Italic,
   Link,
@@ -10,23 +9,8 @@ import {
   Header,
   Section,
   SubSection,
+  Paragraph,
 } from './elements'
-
-describe('Container', () => {
-  describe('compose()', () => {
-    it('Returns a composed string of the elements given to the Container object.', () => {
-      const someContainer = Container(['A string'])
-
-      expect(someContainer.compose()).to.equal('A string')
-    })
-
-    it('Returns a new string composed of all elements in the Container object.', () => {
-      const someContainer = Container(['Child One', 'Child Two', 'Child Three'])
-
-      expect(someContainer.compose()).to.equal('Child OneChild TwoChild Three')
-    })
-  })
-})
 
 describe('Line', () => {
   describe('compose()', () => {
@@ -88,6 +72,12 @@ describe('List', () => {
       const someList = List(['a list item', someElement])
 
       expect(someList.compose()).to.match(/- .*\n- .*\n/)
+    })
+
+    it('Is preceded & followed by an empty line.', () => {
+      const someList = List(['a list item'])
+
+      expect(someList.compose()).to.match(/\n.*a list item\n\n/)
     })
   })
 })
@@ -217,6 +207,29 @@ describe('Subsection', () => {
       const someSection = SubSection('title', [Line('content')])
 
       expect(someSection.compose()).to.match(/^\n\n### title/)
+    })
+  })
+})
+
+describe('Paragraph', () => {
+  describe('compose()', () => {
+    it('Contains the given text, preceded by and followed by an empty line.', () => {
+      const someParagraph = Paragraph(['A paragraph.'])
+
+      expect(someParagraph.compose()).to.equal('\nA paragraph.\n\n')
+    })
+
+    it('Can be given multiple inline elements to put in paragraph.', () => {
+      const someParagraph = Paragraph([
+        'Normal text ',
+        Italic('followed by italics, '),
+        Link('some/link', 'including a link'),
+        '.',
+      ])
+
+      expect(someParagraph.compose()).to.match(
+        /Normal text.*followed by italics.*including a link/
+      )
     })
   })
 })
