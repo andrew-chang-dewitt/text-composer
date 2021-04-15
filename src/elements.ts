@@ -129,6 +129,10 @@ const BuildSection = <T>(
     }
 
     const firstNode = this.children[0]
+    // coverage ignores else branch of next line
+    // because the first node will always be a Header, which is a
+    // Composable object
+    /* istanbul ignore else */
     if (typeof firstNode !== 'string') firstNode.prefix = ''
 
     const lastNode = this.children[this.children.length - 1]
