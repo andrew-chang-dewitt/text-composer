@@ -1,4 +1,4 @@
-type StringLiteral<T> = T extends string
+export type StringLiteral<T> = T extends string
   ? string extends T
     ? never
     : T
@@ -10,6 +10,7 @@ interface Compose {
 
 export interface Node<T> {
   _tag: StringLiteral<T>
+  children: Composable[]
   compose: Compose
   prefix: string
   suffix: string
@@ -20,7 +21,10 @@ export type Composable = Node<any> | string
 const composeNode = (current: Composable, previousNode?: Node<any>): string =>
   typeof current === 'string' ? current : current.compose(previousNode)
 
-const composeArray = (array: Composable[], parentNode?: Node<any>): string =>
+export const composeArray = (
+  array: Composable[],
+  parentNode?: Node<any>
+): string =>
   array
     .map((current, index, array) => {
       // short-circuit finding previous Node if the current node is the first
@@ -53,12 +57,13 @@ export const BuildNode = <Tag>(
 ): Node<Tag> => ({
   // used to identify a Node's sub-type
   _tag: tag,
+  children: children,
   // by using function declaration instead of arrow function, we get access
   // to instance values via `this`
   compose: function () {
     // which means we can access an instance's prefix & suffix properties
     // at composition time, allowing a user to change the prefix or suffix, if needed
-    return composeArray([this.prefix, ...children, this.suffix], this)
+    return composeArray([this.prefix, ...this.children, this.suffix], this)
   },
   // if prefix or suffix is given, use it; otherwise, use empty string
   prefix: options?.prefix ? options.prefix : '',
