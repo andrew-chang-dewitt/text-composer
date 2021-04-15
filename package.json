@@ -1,6 +1,6 @@
 {
   "name": "text-composer",
-  "version": "0.2.0-a4",
+  "version": "0.2.0",
   "description": "",
   "main": "dist/lib.js",
   "types": "dist/lib.d.ts",
