@@ -35,13 +35,20 @@ export const Paragraph = (content: InlineComposable[]): Node<'Paragraph'> =>
     suffix: '\n\n',
   })
 
-const ListItem = (item: InlineComposable): Node<'ListItem'> =>
-  BuildNode<'ListItem'>('ListItem', ['- ', Line(item)])
+const ListItem = (
+  item: InlineComposable,
+  index: number,
+  array: InlineComposable[]
+): Node<'ListItem'> =>
+  BuildNode<'ListItem'>('ListItem', [item], {
+    prefix: '- ',
+    suffix: index === array.length - 1 ? '' : '\n',
+  })
 
 export const List = (items: InlineComposable[]) =>
   BuildNode<'List'>('List', items.map(ListItem), {
     prefix: '\n',
-    suffix: '\n',
+    suffix: '\n\n',
   })
 
 /* istanbul ignore next */
@@ -113,6 +120,7 @@ const BuildSection = <T>(
     [Header(headerSize, title), ...content],
     {
       prefix: emptyLines(precedingEmptyLineCount),
+      suffix: '\n\n',
     }
   )
 
@@ -121,7 +129,10 @@ const BuildSection = <T>(
       switch (previous._tag) {
         case 'List':
         case 'Paragraph':
-        case 'Header': {
+        case 'Header':
+        case 'Section':
+        case 'TitleSection':
+        case 'SubSection': {
           this.prefix = emptyLines(precedingEmptyLineCount - 1)
           break
         }

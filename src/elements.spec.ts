@@ -194,7 +194,7 @@ describe('TitleSection', () => {
         const list = List(['one', 'two'])
         const section = TitleSection('title', [list])
 
-        expect(section.compose()).to.match(/two\n$/)
+        expect(section.compose()).to.match(/two\n\n$/)
       })
     })
   })
@@ -247,11 +247,41 @@ describe('Section', () => {
         expect(parent.compose()).to.match(/header\n\n\n\ntitle/)
       })
 
+      it('Even when the predecessor is a TitleSection.', () => {
+        const first = TitleSection('first', [Line('first child')])
+        const second = Section('second', [Line('second child')])
+        const parent = Container([first, second])
+
+        expect(parent.compose()).to.match(/first child\n\n\n\nsecond/)
+      })
+
+      it('Even when the predecessor is a Section.', () => {
+        const first = Section('first', [Line('first child')])
+        const second = Section('second', [Line('second child')])
+        const parent = Container([first, second])
+
+        expect(parent.compose()).to.match(/first child\n\n\n\nsecond/)
+      })
+
+      it('Even when the predecessor is a SubSection.', () => {
+        const first = SubSection('first', [Line('first child')])
+        const second = Section('second', [Line('second child')])
+        const parent = Container([first, second])
+
+        expect(parent.compose()).to.match(/first child\n\n\n\nsecond/)
+      })
+
+      it('Is followed by exactly 1 empty lines.', () => {
+        const someSection = Section('title', [Line('content')])
+
+        expect(someSection.compose()).to.match(/content\n\n$/)
+      })
+
       it('Removes the suffix of the last content item in the section', () => {
         const list = List(['one', 'two'])
         const section = Section('title', [list])
 
-        expect(section.compose()).to.match(/two\n$/)
+        expect(section.compose()).to.match(/two\n\n$/)
       })
     })
   })
@@ -302,18 +332,35 @@ describe('Subsection', () => {
         expect(parent.compose()).to.match(/header\n\n\n### title/)
       })
 
-      it('Even when the parent is a Section.', () => {
-        const section = SubSection('subSection', [])
-        const parent = Section('section', [section])
+      it('Even when the predecessor is a TitleSection.', () => {
+        const first = TitleSection('first', [Line('first child')])
+        const second = SubSection('second', [Line('second child')])
+        const parent = Container([first, second])
 
-        expect(parent.compose()).to.match(/section\n---\n\n\n### subSection/)
+        expect(parent.compose()).to.match(/first child\n\n\n### second/)
+      })
+
+      it('Even when the predecessor is a Section.', () => {
+        const first = Section('first', [Line('first child')])
+        const second = SubSection('second', [Line('second child')])
+        const parent = Container([first, second])
+
+        expect(parent.compose()).to.match(/first child\n\n\n### second/)
+      })
+
+      it('Even when the predecessor is a SubSection.', () => {
+        const first = SubSection('first', [Line('first child')])
+        const second = SubSection('second', [Line('second child')])
+        const parent = Container([first, second])
+
+        expect(parent.compose()).to.match(/first child\n\n\n### second/)
       })
 
       it('Removes the suffix of the last content item in the section', () => {
         const list = List(['one', 'two'])
-        const section = Section('title', [list])
+        const section = SubSection('title', [list])
 
-        expect(section.compose()).to.match(/two\n$/)
+        expect(section.compose()).to.match(/two\n\n$/)
       })
     })
   })
