@@ -207,10 +207,11 @@ describe('Section', () => {
         Line('content'),
         Line('more'),
         List(['']),
+        'string',
       ])
 
       expect(someSection.compose()).to.match(
-        /title\n---[\s\S]*content[\s\S]*more[\s\S]*- /
+        /title\n---[\s\S]*content[\s\S]*more[\s\S]*- [\s\S]*string/
       )
     })
 
@@ -298,6 +299,13 @@ describe('Subsection', () => {
         const parent = Container([header, section])
 
         expect(parent.compose()).to.match(/header\n\n\n### title/)
+      })
+
+      it('Removes the suffix of the last content item in the section', () => {
+        const list = List(['one', 'two'])
+        const section = Section('title', [list])
+
+        expect(section.compose()).to.match(/two\n$/)
       })
     })
   })
