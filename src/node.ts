@@ -18,8 +18,30 @@ export interface Node<T> {
 
 export type Composable = Node<any> | string
 
-const composeNode = (current: Composable, previousNode?: Node<any>): string =>
+export const composeNode = (
+  current: Composable,
+  previousNode?: Node<any>
+): string =>
   typeof current === 'string' ? current : current.compose(previousNode)
+
+export const getPreviousNode = (
+  currentIndex: number,
+  array: Composable[],
+  parentNode?: Node<any>
+): Node<any> | undefined => {
+  // short-circuit finding previous Node if the current node is the first
+  // one (which is at index 1 since index 0 will be the parent node's prefix);
+  // instead, send the parent (if given)
+  if (currentIndex === 1) return parentNode
+
+  // pass previous Composable to composeNode if and only if it both:
+  // 1) exists
+  // 2) is a Node, not a string
+  // otherwise, pass undefined
+  const prevIndex = currentIndex - 1
+  const previousComposable = prevIndex >= 0 ? array[prevIndex] : undefined
+  return typeof previousComposable === 'string' ? undefined : previousComposable
+}
 
 export const composeArray = (
   array: Composable[],
@@ -27,19 +49,7 @@ export const composeArray = (
 ): string =>
   array
     .map((current, index, array) => {
-      // short-circuit finding previous Node if the current node is the first
-      // one (which is at index 1 since index 0 will be the parent node's prefix);
-      // instead, send the parent (if given)
-      if (index === 1) return composeNode(current, parentNode)
-
-      // pass previous Composable to composeNode if and only if it both:
-      // 1) exists
-      // 2) is a Node, not a string
-      // otherwise, pass undefined
-      const prevIndex = index - 1
-      const previousComposable = prevIndex >= 0 ? array[prevIndex] : undefined
-      const previousNode =
-        typeof previousComposable === 'string' ? undefined : previousComposable
+      const previousNode = getPreviousNode(index, array, parentNode)
 
       return composeNode(current, previousNode)
     })

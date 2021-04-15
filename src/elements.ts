@@ -1,5 +1,6 @@
 import {
-  composeArray,
+  composeNode,
+  getPreviousNode,
   BuildNode,
   Node,
   Composable,
@@ -125,7 +126,16 @@ const BuildSection = <T>(
       }
     }
 
-    return composeArray([this.prefix, ...this.children, this.suffix], this)
+    const lastNode = this.children[this.children.length - 1]
+    if (!(typeof lastNode === 'string')) lastNode.suffix = ''
+
+    return [this.prefix, ...this.children, this.suffix]
+      .map((current, index, array) => {
+        const previousNode = getPreviousNode(index, array, this)
+
+        return composeNode(current, previousNode)
+      })
+      .join('')
   }
 
   return node
