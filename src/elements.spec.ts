@@ -2,6 +2,7 @@ import 'mocha'
 import { expect } from 'chai'
 
 import {
+  Container,
   Line,
   Italic,
   Link,
@@ -181,10 +182,36 @@ describe('Section', () => {
       )
     })
 
-    it('Is preceded by exactly 3 empty lines.', () => {
-      const someSection = Section('title', [Line('content')])
+    describe('Spacing', () => {
+      it('Is preceded by exactly 3 empty lines.', () => {
+        const someSection = Section('title', [Line('content')])
 
-      expect(someSection.compose()).to.match(/^\n\n\ntitle/)
+        expect(someSection.compose()).to.match(/^\n\n\ntitle/)
+      })
+
+      it('Even when the predecessor is a List.', () => {
+        const list = List(['item'])
+        const section = Section('title', [])
+        const parent = Container([list, section])
+
+        expect(parent.compose()).to.match(/item\n\n\n\ntitle/)
+      })
+
+      it('Even when the predecessor is a Paragraph.', () => {
+        const paragraph = Paragraph(['paragraph'])
+        const section = Section('title', [])
+        const parent = Container([paragraph, section])
+
+        expect(parent.compose()).to.match(/paragraph\n\n\n\ntitle/)
+      })
+
+      it('Even when the predecessor is a Header.', () => {
+        const header = Header(3, 'header')
+        const section = Section('title', [])
+        const parent = Container([header, section])
+
+        expect(parent.compose()).to.match(/header\n\n\n\ntitle/)
+      })
     })
   })
 })
@@ -203,10 +230,36 @@ describe('Subsection', () => {
       )
     })
 
-    it('Is preceded by exactly 2 empty lines.', () => {
-      const someSection = SubSection('title', [Line('content')])
+    describe('Spacing', () => {
+      it('Is preceded by exactly 2 empty lines.', () => {
+        const someSection = SubSection('title', [Line('content')])
 
-      expect(someSection.compose()).to.match(/^\n\n### title/)
+        expect(someSection.compose()).to.match(/^\n\n### title/)
+      })
+
+      it('Even when the predecessor is a List.', () => {
+        const list = List(['item'])
+        const section = SubSection('title', [])
+        const parent = Container([list, section])
+
+        expect(parent.compose()).to.match(/item\n\n\n### title/)
+      })
+
+      it('Even when the predecessor is a Paragraph.', () => {
+        const paragraph = Paragraph(['paragraph'])
+        const section = SubSection('title', [])
+        const parent = Container([paragraph, section])
+
+        expect(parent.compose()).to.match(/paragraph\n\n\n### title/)
+      })
+
+      it('Even when the predecessor is a Header.', () => {
+        const header = Header(3, 'header')
+        const section = SubSection('title', [])
+        const parent = Container([header, section])
+
+        expect(parent.compose()).to.match(/header\n\n\n### title/)
+      })
     })
   })
 })

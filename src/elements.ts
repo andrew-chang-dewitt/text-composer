@@ -1,4 +1,13 @@
-import { Node, BuildNode, Composable } from './node'
+import {
+  composeArray,
+  BuildNode,
+  Node,
+  Composable,
+  StringLiteral,
+} from './node'
+
+export const Container = (content: Composable[]): Node<'Container'> =>
+  BuildNode<'Container'>('Container', content)
 
 type InlineComposable = string | Node<'Italic'> | Node<'Link'>
 
@@ -17,16 +26,22 @@ export const Link = (
 }
 
 export const Line = (content: Composable): Node<'Line'> =>
-  BuildNode<'Line'>('Line', [content, '\n'])
+  BuildNode<'Line'>('Line', [content], { suffix: '\n' })
 
 export const Paragraph = (content: InlineComposable[]): Node<'Paragraph'> =>
-  BuildNode<'Paragraph'>('Paragraph', ['\n', ...content, '\n\n'])
+  BuildNode<'Paragraph'>('Paragraph', content, {
+    prefix: '\n',
+    suffix: '\n\n',
+  })
 
 const ListItem = (item: InlineComposable): Node<'ListItem'> =>
   BuildNode<'ListItem'>('ListItem', ['- ', Line(item)])
 
 export const List = (items: InlineComposable[]) =>
-  BuildNode<'List'>('List', ['\n', ...items.map(ListItem), '\n'])
+  BuildNode<'List'>('List', items.map(ListItem), {
+    prefix: '\n',
+    suffix: '\n',
+  })
 
 /* istanbul ignore next */
 const assertUnreachable = (): never => {
@@ -72,21 +87,57 @@ export const Header = (
     }
   }
 
-  return BuildNode<'Header'>('Header', [
-    '\n',
-    ...buildContent(level, text),
-    '\n',
-  ])
+  return BuildNode<'Header'>('Header', [...buildContent(level, text)], {
+    prefix: '\n',
+    suffix: '\n',
+  })
+}
+
+const emptyLines = (count: number): string =>
+  Array.from(Array(count))
+    .map(() => '\n')
+    .join('')
+
+const BuildSection = <T>(
+  title: InlineComposable,
+  content: Composable[],
+  headerSize: number,
+  precedingEmptyLineCount: number,
+  sectionType: StringLiteral<T>
+): Node<T> => {
+  const node = BuildNode<T>(
+    sectionType,
+    [Header(headerSize, title), ...content],
+    {
+      prefix: emptyLines(precedingEmptyLineCount - 1),
+    }
+  )
+
+  node.compose = function (previous?: Node<any>) {
+    if (previous) {
+      switch (previous._tag) {
+        case 'List':
+        case 'Paragraph':
+        case 'Header': {
+          this.prefix = emptyLines(precedingEmptyLineCount - 2)
+          break
+        }
+      }
+    }
+
+    return composeArray([this.prefix, ...this.children, this.suffix], this)
+  }
+
+  return node
 }
 
 export const Section = (
   title: InlineComposable,
   content: Composable[]
-): Node<'Section'> =>
-  BuildNode<'Section'>('Section', ['\n\n', Header(2, title), ...content])
+): Node<'Section'> => BuildSection<'Section'>(title, content, 2, 3, 'Section')
 
 export const SubSection = (
   title: InlineComposable,
   content: Composable[]
-): Node<'Section'> =>
-  BuildNode<'Section'>('Section', ['\n', Header(3, title), ...content])
+): Node<'SubSection'> =>
+  BuildSection<'SubSection'>(title, content, 3, 2, 'SubSection')
