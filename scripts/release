@@ -46,6 +46,11 @@ echo ""
 
 # Build from current source
 npm run build
+# If error encountered while building, exit
+if [[ $? == 1 ]]; then
+    exit 1
+fi
+
 # By packing while in releases directory, the tarball will be saved here.
 cd ./releases
 npm pack ..
