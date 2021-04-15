@@ -95,9 +95,11 @@ export const Header = (
 }
 
 const emptyLines = (count: number): string =>
-  Array.from(Array(count))
-    .map(() => '\n')
-    .join('')
+  count > 0
+    ? Array.from(Array(count))
+        .map(() => '\n')
+        .join('')
+    : ''
 
 const BuildSection = <T>(
   title: InlineComposable,
@@ -110,7 +112,7 @@ const BuildSection = <T>(
     sectionType,
     [Header(headerSize, title), ...content],
     {
-      prefix: emptyLines(precedingEmptyLineCount - 1),
+      prefix: emptyLines(precedingEmptyLineCount),
     }
   )
 
@@ -120,14 +122,17 @@ const BuildSection = <T>(
         case 'List':
         case 'Paragraph':
         case 'Header': {
-          this.prefix = emptyLines(precedingEmptyLineCount - 2)
+          this.prefix = emptyLines(precedingEmptyLineCount - 1)
           break
         }
       }
     }
 
+    const firstNode = this.children[0]
+    if (typeof firstNode !== 'string') firstNode.prefix = ''
+
     const lastNode = this.children[this.children.length - 1]
-    if (!(typeof lastNode === 'string')) lastNode.suffix = ''
+    if (typeof lastNode !== 'string') lastNode.suffix = ''
 
     return [this.prefix, ...this.children, this.suffix]
       .map((current, index, array) => {
@@ -140,6 +145,12 @@ const BuildSection = <T>(
 
   return node
 }
+
+export const TitleSection = (
+  title: InlineComposable,
+  content: Composable[]
+): Node<'TitleSection'> =>
+  BuildSection<'TitleSection'>(title, content, 1, 0, 'TitleSection')
 
 export const Section = (
   title: InlineComposable,
