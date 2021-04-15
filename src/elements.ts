@@ -128,12 +128,16 @@ const BuildSection = <T>(
       }
     }
 
+    console.log(this.children.map((child) => typeof child))
     const firstNode = this.children[0]
     // coverage ignores else branch of next line
     // because the first node will always be a Header, which is a
     // Composable object
     /* istanbul ignore else */
     if (typeof firstNode !== 'string') firstNode.prefix = ''
+
+    const secondNode = this.children[1]
+    if (secondNode && typeof secondNode !== 'string') secondNode.prefix = ''
 
     const lastNode = this.children[this.children.length - 1]
     if (typeof lastNode !== 'string') lastNode.suffix = ''

@@ -204,6 +204,7 @@ describe('Section', () => {
   describe('compose()', () => {
     it('Contains a level 2 Header, followed by the given Elements.', () => {
       const someSection = Section('title', [
+        'string',
         Line('content'),
         Line('more'),
         List(['']),
@@ -211,7 +212,7 @@ describe('Section', () => {
       ])
 
       expect(someSection.compose()).to.match(
-        /title\n---[\s\S]*content[\s\S]*more[\s\S]*- [\s\S]*string/
+        /title\n---[\s\S]*stringcontent[\s\S]*more[\s\S]*- [\s\S]*string/
       )
     })
 
@@ -299,6 +300,13 @@ describe('Subsection', () => {
         const parent = Container([header, section])
 
         expect(parent.compose()).to.match(/header\n\n\n### title/)
+      })
+
+      it('Even when the parent is a Section.', () => {
+        const section = SubSection('subSection', [])
+        const parent = Section('section', [section])
+
+        expect(parent.compose()).to.match(/section\n---\n\n\n### subSection/)
       })
 
       it('Removes the suffix of the last content item in the section', () => {
