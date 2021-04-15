@@ -212,6 +212,13 @@ describe('Section', () => {
 
         expect(parent.compose()).to.match(/header\n\n\n\ntitle/)
       })
+
+      it('Removes the suffix of the last content item in the section', () => {
+        const list = List(['one', 'two'])
+        const section = Section('title', [list])
+
+        expect(section.compose()).to.match(/two\n$/)
+      })
     })
   })
 })
