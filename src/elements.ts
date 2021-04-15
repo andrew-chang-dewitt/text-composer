@@ -128,7 +128,6 @@ const BuildSection = <T>(
       }
     }
 
-    console.log(this.children.map((child) => typeof child))
     const firstNode = this.children[0]
     // coverage ignores else branch of next line
     // because the first node will always be a Header, which is a
