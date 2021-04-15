@@ -1,0 +1,14 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "resume.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andrew Chang-DeWitt",
+  "license": "MIT",
+  "devDependencies": {
+    "text-composer": "https://github.com/andrew-chang-dewitt/text-composer/releases/download/0.2.0/text-composer-0.2.0.tgz"
+  }
+}
