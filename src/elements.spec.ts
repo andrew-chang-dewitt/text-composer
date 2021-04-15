@@ -8,6 +8,7 @@ import {
   Link,
   List,
   Header,
+  TitleSection,
   Section,
   SubSection,
   Paragraph,
@@ -163,6 +164,37 @@ describe('Header', () => {
         const someHeader = Header(6, 'text')
 
         expect(someHeader.compose()).to.contain('###### text')
+      })
+    })
+  })
+})
+
+describe('TitleSection', () => {
+  describe('compose()', () => {
+    it('Contains a level 2 Header, followed by the given Elements.', () => {
+      const someSection = TitleSection('title', [
+        Line('content'),
+        Line('more'),
+        List(['']),
+      ])
+
+      expect(someSection.compose()).to.match(
+        /title\n===[\s\S]*content[\s\S]*more[\s\S]*- /
+      )
+    })
+
+    describe('Spacing', () => {
+      it('Is preceded by exactly 0 empty lines.', () => {
+        const someSection = TitleSection('title', [Line('content')])
+
+        expect(someSection.compose()).to.match(/^title/)
+      })
+
+      it('Removes the suffix of the last content item in the section', () => {
+        const list = List(['one', 'two'])
+        const section = TitleSection('title', [list])
+
+        expect(section.compose()).to.match(/two\n$/)
       })
     })
   })
